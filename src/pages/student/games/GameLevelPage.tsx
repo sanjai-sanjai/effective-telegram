@@ -86,18 +86,6 @@ const getGameConfig = (subject: string, level: string): GameConfig => {
         ]
       }
     },
-    // Keep other legacy/generic configs...
-    "finance-1": {
-      type: "matching",
-      data: {
-        pairs: [
-          { id: "1", left: "Income", right: "Money earned" },
-          { id: "2", left: "Expense", right: "Money spent" },
-          { id: "3", left: "Savings", right: "Money kept" },
-          { id: "4", left: "Budget", right: "Spending plan" },
-        ]
-      }
-    },
   };
 
   // Return configured game or default to quiz
