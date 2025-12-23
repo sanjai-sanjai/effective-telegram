@@ -366,6 +366,16 @@ export default function FinanceSubjectPage() {
     setSelectedGame(null);
   };
 
+  const handleMarkAsComplete = () => {
+    if (selectedChapter) {
+      setCompletedChapters((prev) => {
+        const updated = new Set(prev);
+        updated.add(selectedChapter.chapter);
+        return updated;
+      });
+    }
+  };
+
   // Show chapter view
   if (selectedChapter) {
     return (
