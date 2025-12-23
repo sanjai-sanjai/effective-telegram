@@ -443,6 +443,19 @@ export default function TasksPage() {
                 const CategoryIcon = catConfig.icon;
 
                 const isCompleted = userTask.status === "completed";
+                const isActive = userTask.status === "in_progress";
+                const isAvailable = userTask.status === "available";
+
+                // Determine verification status for completed tasks (demo purposes)
+                const getCompletionStatus = () => {
+                  if (!isCompleted) return null;
+                  const statusRandom = Math.random();
+                  if (statusRandom < 0.5) return "verified"; // ✅ Verified
+                  if (statusRandom < 0.8) return "pending"; // ⏳ Pending
+                  return "rejected"; // ❌ Rejected
+                };
+
+                const completionStatus = getCompletionStatus();
 
                 return (
                   <Card
