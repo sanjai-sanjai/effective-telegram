@@ -540,21 +540,21 @@ export default function EnergyQuest() {
             </div>
 
             {/* Energy Status */}
-            <div className="grid grid-cols-3 gap-3 p-4 bg-gray-50 rounded-lg">
+            <div className="grid grid-cols-3 gap-3 p-4 bg-muted rounded-lg">
               <div className="text-center">
                 <div className="text-2xl">💧</div>
-                <div className="text-xs text-gray-600">Water</div>
-                <div className="text-lg font-bold text-blue-600">{Math.round(gameState.waterLevel)}%</div>
+                <div className="text-xs text-muted-foreground">Water</div>
+                <div className="text-lg font-bold text-accent">{Math.round(gameState.waterLevel)}%</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl">⚙️</div>
-                <div className="text-xs text-gray-600">Turbine</div>
-                <div className="text-lg font-bold text-red-600">{Math.round(gameState.turbineRotation % 360)}°</div>
+                <div className="text-xs text-muted-foreground">Turbine</div>
+                <div className="text-lg font-bold text-destructive">{Math.round(gameState.turbineRotation % 360)}°</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl">⚡</div>
-                <div className="text-xs text-gray-600">Power</div>
-                <div className="text-lg font-bold text-orange-600">{Math.round(gameState.generatorPower)}kW</div>
+                <div className="text-xs text-muted-foreground">Power</div>
+                <div className="text-lg font-bold text-badge">{Math.round(gameState.generatorPower)}kW</div>
               </div>
             </div>
 
