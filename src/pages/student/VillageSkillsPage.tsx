@@ -1,5 +1,6 @@
 import { SubjectLayout } from "@/components/student/SubjectLayout";
 import { GameMissionCard } from "@/components/student/GameMissionCard";
+import { VillageSkillsActiveLearning } from "@/components/active-learning/VillageSkillsActiveLearning";
 import { TreePine, Droplets, Wheat, Hammer, Heart, Recycle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
