@@ -27,6 +27,10 @@ import {
   PriceCompareMaster,
   MiniBusinessTycoon,
   DigitalMoneyExplorer,
+  MoneyFlowVisualizer,
+  GuidedSorter,
+  TimelineComparison,
+  InterestStory,
 } from "@/components/games";
 
 interface GameCard {
