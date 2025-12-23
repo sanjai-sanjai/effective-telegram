@@ -19,7 +19,7 @@ import {
   Lock,
   CheckCircle2
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import {
   RealLifeBudgetSurvival,
@@ -329,7 +329,13 @@ export default function FinanceSubjectPage() {
   const [playingGame, setPlayingGame] = useState<GameCard | null>(null);
   const [activeModule, setActiveModule] = useState<ActiveLearningModule | null>(null);
   const [selectedChapter, setSelectedChapter] = useState<PassiveLearningChapter | null>(null);
+  const [completedChapters, setCompletedChapters] = useState<Set<number>>(new Set());
   const totalProgress = 65;
+
+  // Scroll to top when chapter is selected, learning mode changes, game starts, or page mounts
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [learningMode, selectedChapter, playingGame]);
 
   const handlePlayGame = (game: GameCard) => {
     setSelectedGame(game);
@@ -356,6 +362,16 @@ export default function FinanceSubjectPage() {
   const handleExitGame = () => {
     setPlayingGame(null);
     setSelectedGame(null);
+  };
+
+  const handleMarkAsComplete = () => {
+    if (selectedChapter) {
+      setCompletedChapters((prev) => {
+        const updated = new Set(prev);
+        updated.add(selectedChapter.chapter);
+        return updated;
+      });
+    }
   };
 
   // Show chapter view
@@ -395,6 +411,28 @@ export default function FinanceSubjectPage() {
                 {selectedChapter.chapter === 1 && (
                   <>
                     <h2 className="font-heading text-2xl font-bold text-foreground mt-6 mb-3">What is Money?</h2>
+
+                    {/* Visual: Evolution of Money */}
+                    <div className="bg-secondary/10 rounded-xl p-6 my-6 border border-secondary/20">
+                      <div className="flex items-center justify-between gap-4 mb-4">
+                        <div className="text-center">
+                          <div className="text-4xl mb-2">🪙</div>
+                          <p className="text-sm font-semibold text-foreground">Commodity<br/>Money</p>
+                        </div>
+                        <div className="text-2xl text-secondary">→</div>
+                        <div className="text-center">
+                          <div className="text-4xl mb-2">💵</div>
+                          <p className="text-sm font-semibold text-foreground">Physical<br/>Currency</p>
+                        </div>
+                        <div className="text-2xl text-secondary">→</div>
+                        <div className="text-center">
+                          <div className="text-4xl mb-2">💳</div>
+                          <p className="text-sm font-semibold text-foreground">Digital<br/>Money</p>
+                        </div>
+                      </div>
+                      <p className="text-sm text-muted-foreground text-center">The Evolution of Money Over Time</p>
+                    </div>
+
                     <p>Money is a medium of exchange that allows us to trade goods and services without barter. Throughout history, money has evolved from commodity-based systems to modern digital forms.</p>
 
                     <h3 className="font-heading text-lg font-semibold text-foreground mt-5 mb-2">Key Concepts:</h3>
@@ -405,26 +443,76 @@ export default function FinanceSubjectPage() {
                     </ul>
 
                     <h3 className="font-heading text-lg font-semibold text-foreground mt-5 mb-2">Types of Money:</h3>
-                    <ul className="space-y-2 ml-4">
-                      <li>• <strong>Cash:</strong> Physical coins and notes</li>
-                      <li>• <strong>Digital Money:</strong> Transfers, cards, and mobile payments</li>
-                      <li>• <strong>Cryptocurrency:</strong> Digital currencies like Bitcoin</li>
-                    </ul>
+                    <div className="grid grid-cols-3 gap-3 my-4">
+                      <div className="bg-primary/10 rounded-lg p-4 border border-primary/20 text-center">
+                        <div className="text-3xl mb-2">💰</div>
+                        <p className="text-sm font-semibold">Cash</p>
+                        <p className="text-xs text-muted-foreground mt-1">Physical coins and notes</p>
+                      </div>
+                      <div className="bg-secondary/10 rounded-lg p-4 border border-secondary/20 text-center">
+                        <div className="text-3xl mb-2">💳</div>
+                        <p className="text-sm font-semibold">Digital</p>
+                        <p className="text-xs text-muted-foreground mt-1">Cards & mobile payments</p>
+                      </div>
+                      <div className="bg-accent/10 rounded-lg p-4 border border-accent/20 text-center">
+                        <div className="text-3xl mb-2">₿</div>
+                        <p className="text-sm font-semibold">Crypto</p>
+                        <p className="text-xs text-muted-foreground mt-1">Digital currencies</p>
+                      </div>
+                    </div>
                   </>
                 )}
 
                 {selectedChapter.chapter === 2 && (
                   <>
                     <h2 className="font-heading text-2xl font-bold text-foreground mt-6 mb-3">Understanding Savings</h2>
+
+                    {/* Visual: Savings Journey */}
+                    <div className="bg-secondary/10 rounded-xl p-6 my-6 border border-secondary/20">
+                      <div className="flex items-center justify-between gap-3 mb-4">
+                        <div className="text-center flex-1">
+                          <div className="text-4xl mb-2">📉</div>
+                          <p className="text-xs font-semibold text-foreground">No Savings<br/>= Stress</p>
+                        </div>
+                        <div className="text-2xl text-secondary">→</div>
+                        <div className="text-center flex-1">
+                          <div className="text-4xl mb-2">🏦</div>
+                          <p className="text-xs font-semibold text-foreground">Start<br/>Saving</p>
+                        </div>
+                        <div className="text-2xl text-secondary">→</div>
+                        <div className="text-center flex-1">
+                          <div className="text-4xl mb-2">📈</div>
+                          <p className="text-xs font-semibold text-foreground">Watch It<br/>Grow!</p>
+                        </div>
+                      </div>
+                      <p className="text-sm text-muted-foreground text-center">Small savings today = Big dreams tomorrow</p>
+                    </div>
+
                     <p>Savings is the practice of setting aside money for future use instead of spending it immediately. It's one of the most important financial habits you can develop.</p>
 
                     <h3 className="font-heading text-lg font-semibold text-foreground mt-5 mb-2">Why Save?</h3>
-                    <ul className="space-y-2 ml-4">
-                      <li>• Build an emergency fund for unexpected expenses</li>
-                      <li>• Plan for future goals (education, travel, housing)</li>
-                      <li>• Create financial security and reduce stress</li>
-                      <li>• Earn interest on your savings</li>
-                    </ul>
+                    <div className="grid grid-cols-2 gap-3 my-4">
+                      <div className="bg-primary/10 rounded-lg p-4 border border-primary/20">
+                        <div className="text-2xl mb-2">🆘</div>
+                        <p className="text-sm font-semibold">Emergency Fund</p>
+                        <p className="text-xs text-muted-foreground mt-1">Handle unexpected costs</p>
+                      </div>
+                      <div className="bg-accent/10 rounded-lg p-4 border border-accent/20">
+                        <div className="text-2xl mb-2">🎯</div>
+                        <p className="text-sm font-semibold">Future Goals</p>
+                        <p className="text-xs text-muted-foreground mt-1">Education, travel, housing</p>
+                      </div>
+                      <div className="bg-secondary/10 rounded-lg p-4 border border-secondary/20">
+                        <div className="text-2xl mb-2">😌</div>
+                        <p className="text-sm font-semibold">Peace of Mind</p>
+                        <p className="text-xs text-muted-foreground mt-1">Financial security & stress relief</p>
+                      </div>
+                      <div className="bg-secondary/10 rounded-lg p-4 border border-secondary/20">
+                        <div className="text-2xl mb-2">💸</div>
+                        <p className="text-sm font-semibold">Earn Interest</p>
+                        <p className="text-xs text-muted-foreground mt-1">Money that grows itself</p>
+                      </div>
+                    </div>
 
                     <h3 className="font-heading text-lg font-semibold text-foreground mt-5 mb-2">Saving Strategies:</h3>
                     <ul className="space-y-2 ml-4">
@@ -435,36 +523,123 @@ export default function FinanceSubjectPage() {
                     </ul>
 
                     <h3 className="font-heading text-lg font-semibold text-foreground mt-5 mb-2">Interest & Compound Growth:</h3>
-                    <p>When you keep money in a bank account, the bank pays you interest. Compound interest means you earn interest on your interest, which grows your savings exponentially over time.</p>
+                    <div className="bg-accent/10 rounded-lg p-4 my-4 border border-accent/20">
+                      <p className="text-sm mb-3">💡 <strong>The Magic of Compound Interest:</strong></p>
+                      <p className="text-sm text-foreground/80">When you keep ₹1000 in a bank at 5% interest per year:</p>
+                      <ul className="space-y-2 ml-4 mt-3 text-sm text-foreground/80">
+                        <li>Year 1: ₹1,050 (+₹50)</li>
+                        <li>Year 2: ₹1,102.50 (+₹52.50)</li>
+                        <li>Year 5: ₹1,276.28</li>
+                        <li>Year 10: ₹1,628.89</li>
+                      </ul>
+                    </div>
+                    <p>You earn interest on your interest, which grows your savings exponentially over time!</p>
                   </>
                 )}
 
                 {selectedChapter.chapter === 3 && (
                   <>
                     <h2 className="font-heading text-2xl font-bold text-foreground mt-6 mb-3">Banking Basics</h2>
+
+                    {/* Visual: Bank Functions */}
+                    <div className="bg-secondary/10 rounded-xl p-6 my-6 border border-secondary/20">
+                      <div className="text-center mb-4">
+                        <div className="text-5xl mb-3">🏦</div>
+                        <p className="text-sm text-muted-foreground">Your Money's Safe Home</p>
+                      </div>
+                    </div>
+
                     <p>Banks are institutions that safely store your money and provide financial services to help you manage your wealth.</p>
 
                     <h3 className="font-heading text-lg font-semibold text-foreground mt-5 mb-2">What Banks Do:</h3>
-                    <ul className="space-y-2 ml-4">
-                      <li>• Safe storage of your money</li>
-                      <li>• Provide savings and checking accounts</li>
-                      <li>• Offer loans and credit products</li>
-                      <li>• Process payments and transfers</li>
-                      <li>• Pay interest on deposits</li>
-                    </ul>
+                    <div className="space-y-3 my-4">
+                      <div className="bg-primary/10 rounded-lg p-4 border border-primary/20 flex gap-3">
+                        <span className="text-2xl">🛡️</span>
+                        <div className="flex-1">
+                          <p className="font-semibold text-sm">Safe Storage</p>
+                          <p className="text-xs text-muted-foreground mt-1">Keep your money secure and protected</p>
+                        </div>
+                      </div>
+                      <div className="bg-secondary/10 rounded-lg p-4 border border-secondary/20 flex gap-3">
+                        <span className="text-2xl">💼</span>
+                        <div className="flex-1">
+                          <p className="font-semibold text-sm">Multiple Accounts</p>
+                          <p className="text-xs text-muted-foreground mt-1">Savings, checking, and special accounts</p>
+                        </div>
+                      </div>
+                      <div className="bg-accent/10 rounded-lg p-4 border border-accent/20 flex gap-3">
+                        <span className="text-2xl">💰</span>
+                        <div className="flex-1">
+                          <p className="font-semibold text-sm">Loans & Credit</p>
+                          <p className="text-xs text-muted-foreground mt-1">Borrow money when you need it</p>
+                        </div>
+                      </div>
+                      <div className="bg-secondary/10 rounded-lg p-4 border border-secondary/20 flex gap-3">
+                        <span className="text-2xl">🔄</span>
+                        <div className="flex-1">
+                          <p className="font-semibold text-sm">Transfers & Payments</p>
+                          <p className="text-xs text-muted-foreground mt-1">Send and receive money easily</p>
+                        </div>
+                      </div>
+                      <div className="bg-primary/10 rounded-lg p-4 border border-primary/20 flex gap-3">
+                        <span className="text-2xl">📈</span>
+                        <div className="flex-1">
+                          <p className="font-semibold text-sm">Interest Earnings</p>
+                          <p className="text-xs text-muted-foreground mt-1">Your money grows over time</p>
+                        </div>
+                      </div>
+                    </div>
 
                     <h3 className="font-heading text-lg font-semibold text-foreground mt-5 mb-2">Types of Bank Accounts:</h3>
-                    <ul className="space-y-2 ml-4">
-                      <li>• <strong>Savings Account:</strong> For saving money and earning interest</li>
-                      <li>• <strong>Checking Account:</strong> For everyday transactions</li>
-                      <li>• <strong>Student Account:</strong> Special accounts for students</li>
-                    </ul>
+                    <div className="grid grid-cols-1 gap-3 my-4">
+                      <div className="bg-primary/10 rounded-lg p-4 border border-primary/20">
+                        <div className="text-2xl mb-2">🏦</div>
+                        <p className="font-semibold text-sm">Savings Account</p>
+                        <p className="text-xs text-muted-foreground mt-2">✓ Earn interest<br/>✓ Perfect for building wealth<br/>✓ Some withdrawal limits</p>
+                      </div>
+                      <div className="bg-secondary/10 rounded-lg p-4 border border-secondary/20">
+                        <div className="text-2xl mb-2">💳</div>
+                        <p className="font-semibold text-sm">Checking Account</p>
+                        <p className="text-xs text-muted-foreground mt-2">✓ Unlimited transactions<br/>✓ Easy bill payments<br/>✓ No interest typically</p>
+                      </div>
+                      <div className="bg-accent/10 rounded-lg p-4 border border-accent/20">
+                        <div className="text-2xl mb-2">🎓</div>
+                        <p className="font-semibold text-sm">Student Account</p>
+                        <p className="text-xs text-muted-foreground mt-2">✓ Lower minimum balance<br/>✓ Special student benefits<br/>✓ Educational features</p>
+                      </div>
+                    </div>
 
                     <h3 className="font-heading text-lg font-semibold text-foreground mt-5 mb-2">Digital Banking:</h3>
-                    <p>Modern banks offer digital services like mobile apps, UPI transfers, and online banking that make managing your money convenient and secure.</p>
+                    <div className="bg-secondary/10 rounded-lg p-4 my-4 border border-secondary/20">
+                      <div className="flex gap-4 flex-wrap justify-center">
+                        <div className="text-center">
+                          <div className="text-3xl mb-2">📱</div>
+                          <p className="text-xs font-semibold">Mobile Apps</p>
+                        </div>
+                        <div className="text-center">
+                          <div className="text-3xl mb-2">💻</div>
+                          <p className="text-xs font-semibold">Online Banking</p>
+                        </div>
+                        <div className="text-center">
+                          <div className="text-3xl mb-2">📤</div>
+                          <p className="text-xs font-semibold">UPI Transfers</p>
+                        </div>
+                        <div className="text-center">
+                          <div className="text-3xl mb-2">⚡</div>
+                          <p className="text-xs font-semibold">Instant Payments</p>
+                        </div>
+                      </div>
+                      <p className="text-sm text-muted-foreground text-center mt-4">Modern banking at your fingertips - convenient & secure!</p>
+                    </div>
 
                     <h3 className="font-heading text-lg font-semibold text-foreground mt-5 mb-2">Bank Safety:</h3>
-                    <p>Your deposits are protected by the government. Most countries have deposit insurance that guarantees your money is safe even if the bank fails.</p>
+                    <div className="bg-accent/10 rounded-lg p-4 my-4 border border-accent/20 flex gap-3">
+                      <span className="text-2xl">🔒</span>
+                      <div className="flex-1">
+                        <p className="font-semibold text-sm mb-2">Your Money is Protected</p>
+                        <p className="text-sm text-foreground/80">The government guarantees your deposits through deposit insurance. Even if the bank has problems, your money stays safe.</p>
+                      </div>
+                    </div>
                   </>
                 )}
               </div>
@@ -480,9 +655,17 @@ export default function FinanceSubjectPage() {
                 Back to Chapters
               </Button>
               <Button
-                className="flex-1 bg-secondary hover:bg-secondary/90"
+                onClick={handleMarkAsComplete}
+                className={`flex-1 flex items-center justify-center gap-2 ${
+                  completedChapters.has(selectedChapter.chapter)
+                    ? "bg-secondary/80 hover:bg-secondary/80"
+                    : "bg-secondary hover:bg-secondary/90"
+                }`}
               >
-                Mark as Complete
+                {completedChapters.has(selectedChapter.chapter) && (
+                  <CheckCircle2 className="h-4 w-4" />
+                )}
+                {completedChapters.has(selectedChapter.chapter) ? "Completed" : "Mark as Complete"}
               </Button>
             </div>
           </div>
@@ -521,7 +704,7 @@ export default function FinanceSubjectPage() {
     const GameComponent = playingGame.component;
     return (
       <AppLayout role="student" playCoins={1250} title={playingGame.name}>
-        <div className="px-4 py-6 pb-24">
+        <div className="px-4 py-8 pb-24 w-full max-w-6xl mx-auto">
           <GameContainer
             gameComponent={
               <GameComponent onComplete={handleGameComplete} />

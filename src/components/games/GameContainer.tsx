@@ -133,19 +133,21 @@ export function GameContainer({
   const isInExpandedMode = isFullscreen || isExpandedView;
 
   return (
-    <div ref={containerRef} className="w-full">
+    <div ref={containerRef} className="w-full mx-auto">
       {/* Game Canvas Container */}
       <div
         data-game-canvas
-        className={`w-full bg-gradient-to-b from-background to-muted/30 rounded-2xl overflow-hidden ${
-          isExpandedView ? "fixed inset-0 z-50 rounded-none" : ""
+        className={`w-full bg-gradient-to-b from-background to-muted/30 rounded-2xl overflow-hidden border border-border/50 ${
+          isExpandedView ? "fixed inset-0 z-50 rounded-none border-0 flex flex-col" : ""
         }`}
       >
-        <div className="relative w-full" style={{ aspectRatio: isExpandedView ? "auto" : "16 / 9" }}>
+        <div className={`relative w-full ${isExpandedView ? "flex-1 overflow-y-auto overflow-x-hidden flex flex-col" : ""}`} style={{ aspectRatio: isExpandedView ? "auto" : "16 / 9" }}>
           {/* Expand/Fullscreen Button - Top Right */}
           <button
             onClick={handleFullscreenClick}
-            className="absolute top-4 right-4 z-50 h-10 w-10 rounded-lg bg-black/50 hover:bg-black/70 flex items-center justify-center text-white transition-colors"
+            className={`absolute top-4 right-4 z-50 h-10 w-10 rounded-lg bg-black/50 hover:bg-black/70 flex items-center justify-center text-white transition-colors ${
+              isExpandedView ? "fixed top-6 right-6" : ""
+            }`}
             title={
               isFullscreen
                 ? "Exit Fullscreen"
@@ -164,15 +166,15 @@ export function GameContainer({
           </button>
 
           {/* Game Component */}
-          <div className={`w-full flex items-center justify-center overflow-hidden ${
-            isExpandedView ? "h-screen" : "h-full"
+          <div className={`w-full flex-1 flex items-start justify-center ${
+            !isExpandedView ? "h-full" : "pt-4"
           }`}>
             {gameComponent}
           </div>
 
           {/* Expanded/Fullscreen Controls */}
           {isInExpandedMode && (
-            <div className="absolute bottom-4 left-4 right-4 z-50 flex gap-2 justify-center flex-wrap">
+            <div className="relative flex gap-2 justify-center flex-wrap p-4 bg-background/80 border-t border-border/50">
               <Button
                 onClick={onRetry}
                 size="sm"
@@ -205,10 +207,10 @@ export function GameContainer({
 
       {/* Instructions & Learning Section */}
       {!isInExpandedMode && (
-        <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Instructions */}
-          <Card className="glass-card border border-border/50 p-4">
-            <h3 className="font-heading font-semibold text-foreground mb-2 flex items-center gap-2">
+          <Card className="glass-card border border-border/50 p-5 rounded-xl">
+            <h3 className="font-heading font-semibold text-foreground mb-3 flex items-center gap-2">
               <span className="text-lg">📘</span>
               Instructions
             </h3>
@@ -216,8 +218,8 @@ export function GameContainer({
           </Card>
 
           {/* Concept Learned */}
-          <Card className="glass-card border border-border/50 p-4">
-            <h3 className="font-heading font-semibold text-foreground mb-2 flex items-center gap-2">
+          <Card className="glass-card border border-border/50 p-5 rounded-xl">
+            <h3 className="font-heading font-semibold text-foreground mb-3 flex items-center gap-2">
               <span className="text-lg">🧠</span>
               Concept Learned
             </h3>
@@ -228,11 +230,11 @@ export function GameContainer({
 
       {/* Game Controls */}
       {!isInExpandedMode && (
-        <div className="mt-6 flex gap-3 flex-wrap">
+        <div className="mt-8 flex gap-3 justify-center flex-wrap">
           <Button
             onClick={onRetry}
             variant="outline"
-            className="flex-1 sm:flex-none"
+            className="px-6 py-2 rounded-lg"
           >
             <RotateCcw className="h-4 w-4 mr-2" />
             Retry
@@ -240,7 +242,7 @@ export function GameContainer({
           <Button
             onClick={handleExitClick}
             variant="outline"
-            className="flex-1 sm:flex-none"
+            className="px-6 py-2 rounded-lg"
           >
             <X className="h-4 w-4 mr-2" />
             Exit Game

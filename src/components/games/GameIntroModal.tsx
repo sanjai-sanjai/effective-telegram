@@ -29,9 +29,9 @@ export function GameIntroModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onGoBack()}>
-      <DialogContent className="glass-card border-accent/30 max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="glass-card border-accent/30 max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl mx-4 p-8 shadow-2xl border-2">
         <DialogTitle className="sr-only">{config.conceptName}</DialogTitle>
-        <DialogHeader className="text-center space-y-4 pb-4">
+        <DialogHeader className="text-center space-y-4 pb-6">
           {GameIcon && (
             <div className="flex justify-center">
               <div className="h-20 w-20 rounded-2xl bg-accent/20 flex items-center justify-center">
@@ -49,7 +49,7 @@ export function GameIntroModal({
           </div>
         </DialogHeader>
 
-        <div className="space-y-6 px-6 pb-6">
+        <div className="space-y-6">
           {/* What You'll Learn */}
           <div className="space-y-3">
             <div className="flex items-center gap-2">

@@ -144,18 +144,18 @@ export function RealLifeBudgetSurvival({ onComplete }: { onComplete: (score: num
   const allDecided = fixedExpenses.every((e) => gameState.decisions[`${gameState.day}-${e.id}`]);
 
   return (
-    <div className="w-full h-full flex flex-col bg-gradient-to-b from-primary/5 via-accent/5 to-background p-6 gap-6 overflow-auto">
+    <div className="w-full flex flex-col bg-gradient-to-b from-primary/5 via-accent/5 to-background px-4 sm:px-6 lg:px-8 py-6 sm:py-8 gap-6 sm:gap-8 overflow-y-auto">
       {/* Header */}
-      <div className="max-w-4xl mx-auto w-full">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-2xl font-bold text-foreground">🏡 Real Life Budget Survival</h2>
-          <div className="text-right">
-            <div className="text-sm text-muted-foreground">Day {gameState.day}/30</div>
+      <div className="max-w-5xl mx-auto w-full">
+        <div className="flex items-end justify-between gap-4 mb-6">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground leading-tight">🏡 Real Life Budget Survival</h2>
+          <div className="text-right flex-shrink-0">
+            <div className="text-xs sm:text-sm font-medium text-muted-foreground whitespace-nowrap">Day {gameState.day}/30</div>
           </div>
         </div>
 
         {/* Progress Bar */}
-        <div className="w-full h-2 bg-card rounded-full overflow-hidden">
+        <div className="w-full h-3 bg-card rounded-full overflow-hidden shadow-sm">
           <div
             className="h-full bg-gradient-to-r from-primary to-accent transition-all duration-500"
             style={{ width: `${progress}%` }}
@@ -164,32 +164,39 @@ export function RealLifeBudgetSurvival({ onComplete }: { onComplete: (score: num
       </div>
 
       {/* Wallet Status */}
-      <div className="max-w-4xl mx-auto w-full grid grid-cols-3 gap-4">
-        <Card className="glass-card border border-accent/30 p-4">
-          <p className="text-xs text-muted-foreground mb-1">Monthly Salary</p>
-          <p className="text-2xl font-bold text-accent">₹{gameState.salary}</p>
+      <div className="max-w-5xl mx-auto w-full grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+        <Card className="glass-card border border-accent/40 p-4 sm:p-5 rounded-xl hover:border-accent/60 transition-colors flex flex-col justify-between">
+          <p className="text-xs font-medium text-muted-foreground mb-3">Monthly Salary</p>
+          <div className="flex items-baseline justify-between gap-2">
+            <span className="text-2xl sm:text-3xl font-bold text-accent">₹</span>
+            <span className="text-2xl sm:text-3xl font-bold text-accent text-right flex-1">{gameState.salary}</span>
+          </div>
         </Card>
-        <Card className="glass-card border border-primary/30 p-4">
-          <p className="text-xs text-muted-foreground mb-1">Current Wallet</p>
-          <p className="text-2xl font-bold text-primary">₹{gameState.wallet}</p>
+        <Card className="glass-card border border-primary/40 p-4 sm:p-5 rounded-xl hover:border-primary/60 transition-colors flex flex-col justify-between">
+          <p className="text-xs font-medium text-muted-foreground mb-3">Current Wallet</p>
+          <div className="flex items-baseline justify-between gap-2">
+            <span className="text-2xl sm:text-3xl font-bold text-primary">₹</span>
+            <span className="text-2xl sm:text-3xl font-bold text-primary text-right flex-1">{gameState.wallet}</span>
+          </div>
         </Card>
-        <Card className="glass-card border border-secondary/30 p-4">
-          <p className="text-xs text-muted-foreground mb-1">Potential Savings</p>
-          <p className={`text-2xl font-bold ${gameState.wallet >= 500 ? "text-secondary" : "text-destructive"}`}>
-            ₹{Math.max(0, gameState.wallet - 1900)}
-          </p>
+        <Card className="glass-card border border-secondary/40 p-4 sm:p-5 rounded-xl hover:border-secondary/60 transition-colors flex flex-col justify-between">
+          <p className="text-xs font-medium text-muted-foreground mb-3">Potential Savings</p>
+          <div className="flex items-baseline justify-between gap-2">
+            <span className={`text-2xl sm:text-3xl font-bold ${gameState.wallet >= 500 ? "text-secondary" : "text-destructive"}`}>₹</span>
+            <span className={`text-2xl sm:text-3xl font-bold text-right flex-1 ${gameState.wallet >= 500 ? "text-secondary" : "text-destructive"}`}>{Math.max(0, gameState.wallet - 1900)}</span>
+          </div>
         </Card>
       </div>
 
       {/* Messages */}
       {message && (
-        <div className="max-w-4xl mx-auto w-full p-3 bg-primary/20 border border-primary/50 rounded-lg text-sm text-foreground animate-in fade-in">
+        <div className="max-w-5xl mx-auto w-full p-3 sm:p-4 bg-primary/20 border border-primary/50 rounded-xl text-sm text-foreground animate-in fade-in font-medium">
           {message}
         </div>
       )}
 
       {/* Expenses Grid */}
-      <div className="max-w-4xl mx-auto w-full grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="max-w-5xl mx-auto w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-3 sm:gap-4 lg:gap-5">
         {expenses.map((expense) => {
           const key = `${gameState.day}-${expense.id}`;
           const decision = gameState.decisions[key];
@@ -198,27 +205,27 @@ export function RealLifeBudgetSurvival({ onComplete }: { onComplete: (score: num
           return (
             <Card
               key={expense.id}
-              className={`glass-card border p-4 transition-all ${
+              className={`glass-card border p-4 sm:p-5 rounded-xl transition-all ${
                 decision
                   ? decision === "paid"
                     ? "border-secondary/50 bg-secondary/5"
                     : decision === "delayed"
                       ? "border-yellow-500/50 bg-yellow-500/5"
                       : "border-green-500/50 bg-green-500/5"
-                  : "border-border hover:border-primary/50"
+                  : "border-border/60 hover:border-primary/50"
               }`}
             >
-              <div className="flex items-start justify-between mb-2">
-                <div className="text-4xl">{icon}</div>
-                <span className={`text-xs px-2 py-1 rounded ${expense.category === "fixed" ? "bg-destructive/20 text-destructive" : "bg-yellow-500/20 text-yellow-600"}`}>
+              <div className="flex items-start justify-between mb-3">
+                <div className="text-3xl sm:text-4xl">{icon}</div>
+                <span className={`text-xs px-2 py-1 rounded whitespace-nowrap flex-shrink-0 ml-2 ${expense.category === "fixed" ? "bg-destructive/20 text-destructive" : "bg-yellow-500/20 text-yellow-600"}`}>
                   {expense.category === "fixed" ? "Essential" : "Unexpected"}
                 </span>
               </div>
 
-              <h3 className="font-semibold text-foreground mb-1">{expense.name}</h3>
+              <h3 className="font-semibold text-sm sm:text-base text-foreground mb-1">{expense.name}</h3>
               <p className="text-xs text-muted-foreground mb-3">{expense.reason}</p>
 
-              <div className="text-lg font-bold text-accent mb-3">₹{expense.amount}</div>
+              <div className="text-base sm:text-lg font-bold text-accent mb-3">₹{expense.amount}</div>
 
               {!decision ? (
                 <div className="space-y-2">
@@ -226,7 +233,7 @@ export function RealLifeBudgetSurvival({ onComplete }: { onComplete: (score: num
                     size="sm"
                     onClick={() => handlePayExpense(expense)}
                     disabled={gameState.wallet < expense.amount}
-                    className="w-full bg-secondary hover:bg-secondary/90"
+                    className="w-full bg-secondary hover:bg-secondary/90 text-xs sm:text-sm"
                   >
                     Pay Now
                   </Button>
@@ -234,18 +241,18 @@ export function RealLifeBudgetSurvival({ onComplete }: { onComplete: (score: num
                     size="sm"
                     variant="outline"
                     onClick={() => handleDelayExpense(expense)}
-                    className="w-full"
+                    className="w-full text-xs sm:text-sm"
                   >
                     Delay (adds stress)
                   </Button>
                   {expense.category === "random" && (
-                    <Button size="sm" variant="ghost" onClick={() => handleSkipExpense(expense)} className="w-full">
+                    <Button size="sm" variant="ghost" onClick={() => handleSkipExpense(expense)} className="w-full text-xs sm:text-sm">
                       Skip
                     </Button>
                   )}
                 </div>
               ) : (
-                <div className="text-xs text-muted-foreground">
+                <div className="text-xs sm:text-sm text-muted-foreground font-medium">
                   {decision === "paid" && "✅ Paid"}
                   {decision === "delayed" && "⏰ Delayed"}
                   {decision === "skipped" && "✂️ Skipped"}
@@ -258,11 +265,11 @@ export function RealLifeBudgetSurvival({ onComplete }: { onComplete: (score: num
 
       {/* End Day Button */}
       {allDecided && (
-        <div className="max-w-4xl mx-auto w-full">
+        <div className="max-w-5xl mx-auto w-full">
           <Button
             onClick={handleEndDay}
             size="lg"
-            className="w-full bg-gradient-to-r from-primary to-accent"
+            className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 py-5 sm:py-6 text-sm sm:text-base font-semibold rounded-xl"
           >
             {gameState.day === 30 ? "See Results" : "End Day & Continue →"}
           </Button>
@@ -271,15 +278,15 @@ export function RealLifeBudgetSurvival({ onComplete }: { onComplete: (score: num
 
       {/* Win/Loss State */}
       {gameState.status === "won" && (
-        <Card className="max-w-4xl mx-auto w-full glass-card border border-secondary/30 bg-secondary/10 p-6">
-          <div className="flex items-start gap-4">
-            <CheckCircle2 className="w-8 h-8 text-secondary mt-1" />
-            <div>
-              <h3 className="text-lg font-bold text-foreground mb-2">🎉 You Survived!</h3>
-              <p className="text-muted-foreground mb-3">
+        <Card className="max-w-5xl mx-auto w-full glass-card border border-secondary/40 bg-secondary/10 p-6 sm:p-8 rounded-2xl">
+          <div className="flex items-start gap-3 sm:gap-4">
+            <CheckCircle2 className="w-8 sm:w-10 h-8 sm:h-10 text-secondary mt-1 flex-shrink-0" />
+            <div className="flex-1 min-w-0">
+              <h3 className="text-xl sm:text-2xl font-bold text-foreground mb-2 sm:mb-3">🎉 You Survived!</h3>
+              <p className="text-sm sm:text-base text-muted-foreground mb-3 sm:mb-4 leading-relaxed break-words">
                 You managed your budget wisely and ended with ₹{gameState.wallet} in savings!
               </p>
-              <Button onClick={() => onComplete(100)} className="w-full bg-secondary">
+              <Button onClick={() => onComplete(100)} className="w-full bg-secondary hover:bg-secondary/90 py-4 sm:py-6 text-sm sm:text-base font-semibold rounded-xl">
                 Finish & Celebrate
               </Button>
             </div>
@@ -288,15 +295,15 @@ export function RealLifeBudgetSurvival({ onComplete }: { onComplete: (score: num
       )}
 
       {gameState.status === "lost" && (
-        <Card className="max-w-4xl mx-auto w-full glass-card border border-destructive/30 bg-destructive/10 p-6">
-          <div className="flex items-start gap-4">
-            <AlertCircle className="w-8 h-8 text-destructive mt-1" />
-            <div>
-              <h3 className="text-lg font-bold text-foreground mb-2">💔 Better Luck Next Time</h3>
-              <p className="text-muted-foreground mb-3">
+        <Card className="max-w-5xl mx-auto w-full glass-card border border-destructive/40 bg-destructive/10 p-6 sm:p-8 rounded-2xl">
+          <div className="flex items-start gap-3 sm:gap-4">
+            <AlertCircle className="w-8 sm:w-10 h-8 sm:h-10 text-destructive mt-1 flex-shrink-0" />
+            <div className="flex-1 min-w-0">
+              <h3 className="text-xl sm:text-2xl font-bold text-foreground mb-2 sm:mb-3">💔 Better Luck Next Time</h3>
+              <p className="text-sm sm:text-base text-muted-foreground mb-3 sm:mb-4 leading-relaxed break-words">
                 You ended with ₹{gameState.wallet}. To win, you need ₹500 saved after paying essentials. Try again!
               </p>
-              <Button onClick={() => window.location.reload()} className="w-full">
+              <Button onClick={() => window.location.reload()} className="w-full bg-destructive/20 hover:bg-destructive/30 text-destructive py-4 sm:py-6 text-sm sm:text-base font-semibold rounded-xl border border-destructive/50">
                 Retry
               </Button>
             </div>
