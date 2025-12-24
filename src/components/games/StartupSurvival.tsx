@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ChevronRight, X } from "lucide-react";
+import { ChevronRight, X, ArrowLeft } from "lucide-react";
 
 interface GameState {
   phase: "splash" | "setup" | "playing" | "results" | "gameover";
@@ -21,7 +21,7 @@ interface GameState {
   pendingPitch: boolean;
 }
 
-export function StartupSurvival({ onComplete }: { onComplete: (score: number) => void }) {
+export function StartupSurvival({ onComplete, onBack }: { onComplete: (score: number) => void; onBack?: () => void }) {
   const [gameState, setGameState] = useState<GameState>({
     phase: "splash",
     day: 1,
@@ -35,7 +35,18 @@ export function StartupSurvival({ onComplete }: { onComplete: (score: number) =>
     pendingPitch: false
   });
 
+  const [showExitConfirm, setShowExitConfirm] = useState(false);
+
   const RENT_PER_DAY = 50;
+
+  const handleBackPress = () => {
+    // Show confirmation only if game is in progress
+    if (gameState.phase === "playing" && gameState.dailyHistory.length > 0) {
+      setShowExitConfirm(true);
+    } else if (onBack) {
+      onBack();
+    }
+  };
 
   const calculateDemand = (price: number): number => {
     // Demand curve: higher price = lower demand
@@ -166,11 +177,61 @@ export function StartupSurvival({ onComplete }: { onComplete: (score: number) =>
     onComplete(0);
   };
 
+  // Exit Confirmation Dialog
+  if (showExitConfirm) {
+    return (
+      <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+        <div className="bg-card rounded-2xl border border-border p-6 max-w-sm w-full space-y-4">
+          <div className="text-center">
+            <div className="text-5xl mb-3">⚠️</div>
+            <h3 className="font-heading text-xl font-bold text-foreground">Quit Game?</h3>
+            <p className="text-sm text-muted-foreground mt-2">
+              You have {gameState.dailyHistory.length} day{gameState.dailyHistory.length !== 1 ? "s" : ""} of progress. You won't get credit for this attempt.
+            </p>
+          </div>
+
+          <div className="space-y-2">
+            <p className="text-xs text-muted-foreground text-center">
+              Your profit so far: <span className="font-semibold text-secondary">₹{gameState.totalProfit}</span>
+            </p>
+          </div>
+
+          <div className="flex gap-3">
+            <button
+              onClick={() => setShowExitConfirm(false)}
+              className="flex-1 py-2 bg-card border border-border text-foreground hover:border-primary/50 font-semibold rounded-lg transition-all"
+            >
+              Continue Game
+            </button>
+            <button
+              onClick={() => {
+                setShowExitConfirm(false);
+                onBack?.();
+              }}
+              className="flex-1 py-2 bg-destructive/20 border border-destructive/50 text-destructive hover:bg-destructive/30 font-semibold rounded-lg transition-all"
+            >
+              Quit
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   // ===== RENDER: SPLASH SCREEN =====
   if (gameState.phase === "splash") {
     return (
       <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-        <div className="bg-gradient-to-br from-accent/20 to-card rounded-3xl border border-accent/50 p-8 max-w-md w-full space-y-6">
+        <div className="bg-gradient-to-br from-accent/20 to-card rounded-3xl border border-accent/50 p-8 max-w-md w-full space-y-6 relative">
+          {onBack && (
+            <button
+              onClick={handleBackPress}
+              className="absolute top-4 left-4 p-2 hover:bg-card/50 rounded-lg transition-all text-muted-foreground hover:text-foreground"
+              title="Back to Entrepreneurship"
+            >
+              <ArrowLeft size={24} />
+            </button>
+          )}
           <div className="text-center">
             <div className="text-6xl mb-4">🚀</div>
             <h2 className="font-heading text-3xl font-bold text-foreground mb-2">Startup Survival</h2>
@@ -224,10 +285,21 @@ export function StartupSurvival({ onComplete }: { onComplete: (score: number) =>
     return (
       <div className="fixed inset-0 bg-gradient-to-b from-background to-background/80 flex flex-col p-4 overflow-auto">
         <div className="max-w-2xl mx-auto w-full space-y-6 py-6">
-          {/* Header */}
-          <div>
-            <h2 className="font-heading text-3xl font-bold text-foreground">🍹 Day {gameState.day} Setup</h2>
-            <p className="text-sm text-muted-foreground">Plan your day carefully</p>
+          {/* Header with Back Button */}
+          <div className="flex items-start justify-between">
+            <div>
+              <h2 className="font-heading text-3xl font-bold text-foreground">🍹 Day {gameState.day} Setup</h2>
+              <p className="text-sm text-muted-foreground">Plan your day carefully</p>
+            </div>
+            {onBack && (
+              <button
+                onClick={handleBackPress}
+                className="p-2 hover:bg-card rounded-lg transition-all text-muted-foreground hover:text-foreground"
+                title="Back to Entrepreneurship"
+              >
+                <ArrowLeft size={24} />
+              </button>
+            )}
           </div>
 
           {/* Cash Display */}
@@ -353,15 +425,26 @@ export function StartupSurvival({ onComplete }: { onComplete: (score: number) =>
     return (
       <div className="fixed inset-0 bg-gradient-to-b from-background to-background/80 flex flex-col p-4 overflow-auto">
         <div className="max-w-2xl mx-auto w-full space-y-6 py-6">
-          {/* Day Header */}
-          <div className="flex items-center justify-between">
+          {/* Day Header with Back Button */}
+          <div className="flex items-start justify-between">
             <div>
               <h2 className="font-heading text-3xl font-bold text-foreground">☀️ Day {gameState.day}</h2>
               <p className="text-sm text-muted-foreground">Operating your juice stall...</p>
             </div>
-            <div className="text-right">
-              <div className="text-3xl font-bold text-accent">💰 ₹{gameState.cash}</div>
-              <div className="text-xs text-muted-foreground">Cash</div>
+            <div className="text-right flex flex-col items-end gap-4">
+              <div>
+                <div className="text-3xl font-bold text-accent">💰 ₹{gameState.cash}</div>
+                <div className="text-xs text-muted-foreground">Cash</div>
+              </div>
+              {onBack && (
+                <button
+                  onClick={handleBackPress}
+                  className="p-2 hover:bg-card rounded-lg transition-all text-muted-foreground hover:text-foreground"
+                  title="Back to Entrepreneurship"
+                >
+                  <ArrowLeft size={20} />
+                </button>
+              )}
             </div>
           </div>
 

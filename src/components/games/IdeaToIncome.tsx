@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ChevronRight, X } from "lucide-react";
+import { ChevronRight, X, ArrowLeft } from "lucide-react";
 
 interface Location {
   id: string;
@@ -92,7 +92,7 @@ interface GameState {
   totalRevenue: number;
 }
 
-export function IdeaToIncome({ onComplete }: { onComplete: (score: number) => void }) {
+export function IdeaToIncome({ onComplete, onBack }: { onComplete: (score: number) => void; onBack?: () => void }) {
   const [gameState, setGameState] = useState<GameState>({
     phase: "splash",
     selectedProblems: [],
@@ -106,6 +106,17 @@ export function IdeaToIncome({ onComplete }: { onComplete: (score: number) => vo
   const [showProblemDetail, setShowProblemDetail] = useState<string | null>(null);
   const [ideaText, setIdeaText] = useState("");
   const [isSubmittingIdea, setIsSubmittingIdea] = useState(false);
+  const [showExitConfirm, setShowExitConfirm] = useState(false);
+
+  const handleBackPress = () => {
+    // Show confirmation only if game is in progress (explore or pitch phase)
+    if ((gameState.phase === "explore" && gameState.selectedProblems.length > 0) ||
+        (gameState.phase === "pitch" && gameState.npcReactions[gameState.selectedProblems[gameState.currentProblemIndex]]?.length > 0)) {
+      setShowExitConfirm(true);
+    } else if (onBack) {
+      onBack();
+    }
+  };
 
   // Phase: Start Screen
   const handleStartGame = () => {
@@ -116,6 +127,47 @@ export function IdeaToIncome({ onComplete }: { onComplete: (score: number) => vo
   const handleExitGame = () => {
     onComplete(0);
   };
+
+  // Exit Confirmation Dialog
+  if (showExitConfirm) {
+    return (
+      <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+        <div className="bg-card rounded-2xl border border-border p-6 max-w-sm w-full space-y-4">
+          <div className="text-center">
+            <div className="text-5xl mb-3">⚠️</div>
+            <h3 className="font-heading text-xl font-bold text-foreground">Quit Game?</h3>
+            <p className="text-sm text-muted-foreground mt-2">
+              You have selected {gameState.selectedProblems.length} problem{gameState.selectedProblems.length !== 1 ? "s" : ""}. You won't get credit for this attempt.
+            </p>
+          </div>
+
+          <div className="space-y-2">
+            <p className="text-xs text-muted-foreground text-center">
+              Your progress so far: <span className="font-semibold text-secondary">₹{gameState.totalRevenue}</span> earned
+            </p>
+          </div>
+
+          <div className="flex gap-3">
+            <button
+              onClick={() => setShowExitConfirm(false)}
+              className="flex-1 py-2 bg-card border border-border text-foreground hover:border-primary/50 font-semibold rounded-lg transition-all"
+            >
+              Continue Game
+            </button>
+            <button
+              onClick={() => {
+                setShowExitConfirm(false);
+                onBack?.();
+              }}
+              className="flex-1 py-2 bg-destructive/20 border border-destructive/50 text-destructive hover:bg-destructive/30 font-semibold rounded-lg transition-all"
+            >
+              Quit
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // Phase: Explore - Select problems
   const handleSelectProblem = (locationId: string) => {
@@ -201,7 +253,16 @@ export function IdeaToIncome({ onComplete }: { onComplete: (score: number) => vo
   if (gameState.phase === "splash") {
     return (
       <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-        <div className="bg-gradient-to-br from-badge/20 to-card rounded-3xl border border-badge/50 p-8 max-w-md w-full space-y-6">
+        <div className="bg-gradient-to-br from-badge/20 to-card rounded-3xl border border-badge/50 p-8 max-w-md w-full space-y-6 relative">
+          {onBack && (
+            <button
+              onClick={handleBackPress}
+              className="absolute top-4 left-4 p-2 hover:bg-card/50 rounded-lg transition-all text-muted-foreground hover:text-foreground"
+              title="Back to Entrepreneurship"
+            >
+              <ArrowLeft size={24} />
+            </button>
+          )}
           <div className="text-center">
             <div className="text-6xl mb-4">💡</div>
             <h2 className="font-heading text-3xl font-bold text-foreground mb-2">Idea to Income</h2>
@@ -256,15 +317,26 @@ export function IdeaToIncome({ onComplete }: { onComplete: (score: number) => vo
     return (
       <div className="fixed inset-0 bg-gradient-to-b from-background to-background/80 flex flex-col p-4 overflow-auto">
         <div className="max-w-4xl mx-auto w-full space-y-6">
-          {/* Header */}
-          <div className="flex items-center justify-between mb-4">
+          {/* Header with Back Button */}
+          <div className="flex items-start justify-between mb-4">
             <div>
               <h2 className="font-heading text-2xl font-bold text-foreground">🏘️ Explore the Village</h2>
               <p className="text-sm text-muted-foreground">Find 3 problems to solve</p>
             </div>
-            <div className="text-right">
-              <div className="text-3xl font-bold text-badge">{selectedCount}/3</div>
-              <div className="text-xs text-muted-foreground">Selected</div>
+            <div className="text-right flex flex-col items-end gap-4">
+              <div>
+                <div className="text-3xl font-bold text-badge">{selectedCount}/3</div>
+                <div className="text-xs text-muted-foreground">Selected</div>
+              </div>
+              {onBack && (
+                <button
+                  onClick={handleBackPress}
+                  className="p-2 hover:bg-card rounded-lg transition-all text-muted-foreground hover:text-foreground"
+                  title="Back to Entrepreneurship"
+                >
+                  <ArrowLeft size={20} />
+                </button>
+              )}
             </div>
           </div>
 
@@ -340,15 +412,26 @@ export function IdeaToIncome({ onComplete }: { onComplete: (score: number) => vo
     return (
       <div className="fixed inset-0 bg-gradient-to-b from-background to-background/80 flex flex-col p-4 overflow-auto">
         <div className="max-w-4xl mx-auto w-full space-y-6">
-          {/* Progress */}
-          <div className="flex items-center justify-between mb-4">
+          {/* Progress with Back Button */}
+          <div className="flex items-start justify-between mb-4">
             <div>
               <h2 className="font-heading text-2xl font-bold text-foreground">🎤 Pitch Your Ideas</h2>
               <p className="text-sm text-muted-foreground">Problem {gameState.currentProblemIndex + 1} of {gameState.selectedProblems.length}</p>
             </div>
-            <div className="text-right">
-              <div className="text-2xl font-bold text-secondary">💰 ₹{gameState.totalRevenue}</div>
-              <div className="text-xs text-muted-foreground">Earned</div>
+            <div className="text-right flex flex-col items-end gap-4">
+              <div>
+                <div className="text-2xl font-bold text-secondary">💰 ₹{gameState.totalRevenue}</div>
+                <div className="text-xs text-muted-foreground">Earned</div>
+              </div>
+              {onBack && (
+                <button
+                  onClick={handleBackPress}
+                  className="p-2 hover:bg-card rounded-lg transition-all text-muted-foreground hover:text-foreground"
+                  title="Back to Entrepreneurship"
+                >
+                  <ArrowLeft size={20} />
+                </button>
+              )}
             </div>
           </div>
 
@@ -435,7 +518,16 @@ export function IdeaToIncome({ onComplete }: { onComplete: (score: number) => vo
     const finalScore = gameState.totalTrust + Math.floor(gameState.totalRevenue / 10);
 
     return (
-      <div className="fixed inset-0 bg-gradient-to-b from-background to-background/80 flex items-center justify-center p-4">
+      <div className="fixed inset-0 bg-gradient-to-b from-background to-background/80 flex items-center justify-center p-4 relative">
+        {onBack && (
+          <button
+            onClick={() => onBack()}
+            className="absolute top-4 left-4 p-2 hover:bg-card rounded-lg transition-all text-muted-foreground hover:text-foreground"
+            title="Back to Entrepreneurship"
+          >
+            <ArrowLeft size={24} />
+          </button>
+        )}
         <div className="max-w-md w-full space-y-6">
           <div className="text-center">
             <div className="text-6xl mb-4 animate-bounce">🏆</div>

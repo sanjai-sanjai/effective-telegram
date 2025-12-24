@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, ArrowLeft } from "lucide-react";
 
 interface GameState {
   phase: "splash" | "selling" | "feedback" | "improvement" | "results";
@@ -35,7 +35,7 @@ const FEEDBACK_BANK: CustomerFeedback[] = [
   { name: "Dev", emoji: "👨", complaint: "Paper quality isn't great", weight: 0.5 }
 ];
 
-export function CustomerFirst({ onComplete }: { onComplete: (score: number) => void }) {
+export function CustomerFirst({ onComplete, onBack }: { onComplete: (score: number) => void; onBack?: () => void }) {
   const [gameState, setGameState] = useState<GameState>({
     phase: "splash",
     round: 1,
@@ -53,6 +53,18 @@ export function CustomerFirst({ onComplete }: { onComplete: (score: number) => v
   const [selectedFeedback, setSelectedFeedback] = useState<string | null>(null);
   const [showingFeedback, setShowingFeedback] = useState(false);
   const [improvementCost, setImprovementCost] = useState(0);
+  const [showExitConfirm, setShowExitConfirm] = useState(false);
+
+  const handleBackPress = () => {
+    // Show confirmation only if game is in progress
+    if ((gameState.phase === "selling" && gameState.roundHistory.length > 0) ||
+        (gameState.phase === "feedback" && gameState.roundHistory.length > 0) ||
+        (gameState.phase === "improvement" && gameState.roundHistory.length > 0)) {
+      setShowExitConfirm(true);
+    } else if (onBack) {
+      onBack();
+    }
+  };
 
   const handleStartGame = () => {
     setGameState(prev => ({ ...prev, phase: "selling" }));
@@ -151,11 +163,61 @@ export function CustomerFirst({ onComplete }: { onComplete: (score: number) => v
 
   const topComplaints = FEEDBACK_BANK.slice(0, 3);
 
+  // Exit Confirmation Dialog
+  if (showExitConfirm) {
+    return (
+      <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+        <div className="bg-card rounded-2xl border border-border p-6 max-w-sm w-full space-y-4">
+          <div className="text-center">
+            <div className="text-5xl mb-3">⚠️</div>
+            <h3 className="font-heading text-xl font-bold text-foreground">Quit Game?</h3>
+            <p className="text-sm text-muted-foreground mt-2">
+              You have completed {gameState.roundHistory.length} round{gameState.roundHistory.length !== 1 ? "s" : ""}. You won't get credit for this attempt.
+            </p>
+          </div>
+
+          <div className="space-y-2">
+            <p className="text-xs text-muted-foreground text-center">
+              Your progress so far: <span className="font-semibold text-secondary">₹{gameState.totalRevenue}</span> earned
+            </p>
+          </div>
+
+          <div className="flex gap-3">
+            <button
+              onClick={() => setShowExitConfirm(false)}
+              className="flex-1 py-2 bg-card border border-border text-foreground hover:border-primary/50 font-semibold rounded-lg transition-all"
+            >
+              Continue Game
+            </button>
+            <button
+              onClick={() => {
+                setShowExitConfirm(false);
+                onBack?.();
+              }}
+              className="flex-1 py-2 bg-destructive/20 border border-destructive/50 text-destructive hover:bg-destructive/30 font-semibold rounded-lg transition-all"
+            >
+              Quit
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   // ===== RENDER: SPLASH SCREEN =====
   if (gameState.phase === "splash") {
     return (
       <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-        <div className="bg-gradient-to-br from-secondary/20 to-card rounded-3xl border border-secondary/50 p-8 max-w-md w-full space-y-6">
+        <div className="bg-gradient-to-br from-secondary/20 to-card rounded-3xl border border-secondary/50 p-8 max-w-md w-full space-y-6 relative">
+          {onBack && (
+            <button
+              onClick={handleBackPress}
+              className="absolute top-4 left-4 p-2 hover:bg-card/50 rounded-lg transition-all text-muted-foreground hover:text-foreground"
+              title="Back to Entrepreneurship"
+            >
+              <ArrowLeft size={24} />
+            </button>
+          )}
           <div className="text-center">
             <div className="text-6xl mb-4">👥</div>
             <h2 className="font-heading text-3xl font-bold text-foreground mb-2">Customer First</h2>
@@ -207,15 +269,26 @@ export function CustomerFirst({ onComplete }: { onComplete: (score: number) => v
     return (
       <div className="fixed inset-0 bg-gradient-to-b from-background to-background/80 flex flex-col p-4 overflow-auto">
         <div className="max-w-2xl mx-auto w-full space-y-6 py-6">
-          {/* Header */}
-          <div className="flex items-center justify-between">
+          {/* Header with Back Button */}
+          <div className="flex items-start justify-between">
             <div>
               <h2 className="font-heading text-2xl font-bold text-foreground">📔 Round {gameState.round} Sales</h2>
               <p className="text-sm text-muted-foreground">Selling handmade notebooks</p>
             </div>
-            <div className="text-right">
-              <div className="text-3xl font-bold text-secondary">💰 ₹{gameState.totalRevenue}</div>
-              <div className="text-xs text-muted-foreground">Total Revenue</div>
+            <div className="text-right flex flex-col items-end gap-4">
+              <div>
+                <div className="text-3xl font-bold text-secondary">💰 ₹{gameState.totalRevenue}</div>
+                <div className="text-xs text-muted-foreground">Total Revenue</div>
+              </div>
+              {onBack && (
+                <button
+                  onClick={handleBackPress}
+                  className="p-2 hover:bg-card rounded-lg transition-all text-muted-foreground hover:text-foreground"
+                  title="Back to Entrepreneurship"
+                >
+                  <ArrowLeft size={20} />
+                </button>
+              )}
             </div>
           </div>
 
@@ -299,6 +372,19 @@ export function CustomerFirst({ onComplete }: { onComplete: (score: number) => v
     return (
       <div className="fixed inset-0 bg-gradient-to-b from-background to-background/80 flex flex-col p-4 overflow-auto">
         <div className="max-w-2xl mx-auto w-full space-y-6 py-6">
+          {/* Header with Back Button */}
+          <div className="flex items-center justify-between mb-2">
+            <div />
+            {onBack && (
+              <button
+                onClick={handleBackPress}
+                className="p-2 hover:bg-card rounded-lg transition-all text-muted-foreground hover:text-foreground"
+                title="Back to Entrepreneurship"
+              >
+                <ArrowLeft size={20} />
+              </button>
+            )}
+          </div>
           {/* Result Display */}
           <div>
             <h2 className="font-heading text-2xl font-bold text-foreground mb-4">📊 Sales Result</h2>
@@ -384,7 +470,18 @@ export function CustomerFirst({ onComplete }: { onComplete: (score: number) => v
     return (
       <div className="fixed inset-0 bg-gradient-to-b from-background to-background/80 flex flex-col p-4 overflow-auto">
         <div className="max-w-2xl mx-auto w-full space-y-6 py-6">
-          <h2 className="font-heading text-2xl font-bold text-foreground">🔧 {improvementTitle}</h2>
+          <div className="flex items-center justify-between">
+            <h2 className="font-heading text-2xl font-bold text-foreground">🔧 {improvementTitle}</h2>
+            {onBack && (
+              <button
+                onClick={handleBackPress}
+                className="p-2 hover:bg-card rounded-lg transition-all text-muted-foreground hover:text-foreground"
+                title="Back to Entrepreneurship"
+              >
+                <ArrowLeft size={20} />
+              </button>
+            )}
+          </div>
 
           <div className="glass-card rounded-xl border border-primary/50 p-6 bg-primary/10 space-y-4">
             <div className="space-y-4">
@@ -467,7 +564,16 @@ export function CustomerFirst({ onComplete }: { onComplete: (score: number) => v
     const finalScore = Math.floor((avgSatisfaction * 100) + (gameState.totalRevenue / 10));
 
     return (
-      <div className="fixed inset-0 bg-gradient-to-b from-background to-background/80 flex items-center justify-center p-4">
+      <div className="fixed inset-0 bg-gradient-to-b from-background to-background/80 flex items-center justify-center p-4 relative">
+        {onBack && (
+          <button
+            onClick={() => onBack()}
+            className="absolute top-4 left-4 p-2 hover:bg-card rounded-lg transition-all text-muted-foreground hover:text-foreground"
+            title="Back to Entrepreneurship"
+          >
+            <ArrowLeft size={24} />
+          </button>
+        )}
         <div className="max-w-md w-full space-y-6">
           <div className="text-center">
             <div className="text-6xl mb-4 animate-bounce">🎉</div>
