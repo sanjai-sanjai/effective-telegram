@@ -22,11 +22,13 @@ export function WalletBalanceHeader({ balance, className }: WalletBalanceHeaderP
   return (
     <>
       <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
         .wallet-balance-header {
           display: inline-flex;
           align-items: center;
           gap: 0.5rem;
-          font-weight: 600;
+          font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
           border-radius: 9999px;
           padding: 0.375rem 0.75rem;
           background-image: linear-gradient(145deg, rgba(33, 27, 45, 0.8), rgba(23, 19, 32, 0.9));
@@ -61,6 +63,21 @@ export function WalletBalanceHeader({ balance, className }: WalletBalanceHeaderP
           display: block;
         }
 
+        .wallet-amount {
+          font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+          font-weight: 600;
+          font-size: 0.875rem;
+          letter-spacing: -0.2px;
+          color: rgb(16, 183, 127);
+        }
+
+        .wallet-label {
+          font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+          font-weight: 500;
+          font-size: 0.875rem;
+          color: rgb(138, 148, 168);
+        }
+
         /* Mobile: Reduce coin size to 20px */
         @media (max-width: 640px) {
           .wallet-coin-container img {
@@ -74,10 +91,10 @@ export function WalletBalanceHeader({ balance, className }: WalletBalanceHeaderP
         <div className="wallet-coin-container">
           <EduCoin size="md" animated={true} />
         </div>
-        <span className="text-secondary font-bold">
+        <span className="wallet-amount">
           {balance.toLocaleString()}
         </span>
-        <span className="text-secondary">EduCoins</span>
+        <span className="wallet-label">EduCoins</span>
       </div>
     </>
   );

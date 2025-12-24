@@ -83,17 +83,189 @@ export default function RewardsPage() {
   return (
     <AppLayout role="student" playCoins={currentBalance} title="Rewards Marketplace">
       <style>{`
+        /* ============ BALANCE SECTION STYLES ============ */
+        .balance-section {
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+        }
+
+        /* Primary Balance Card — Single Horizontal Card */
+        .balance-card-primary {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          gap: 24px;
+          border-radius: 24px;
+          border: 0.8px solid rgba(5, 179, 214, 0.2);
+          background: linear-gradient(to right, rgba(5, 179, 214, 0.1), rgba(149, 96, 240, 0.1));
+          padding: 20px 24px;
+          position: relative;
+          min-height: 140px;
+        }
+
+        .balance-content {
+          display: flex;
+          flex-direction: column;
+          gap: 0;
+          font-weight: 400;
+          flex: 1;
+          justify-content: center;
+        }
+
+        .balance-label {
+          color: rgb(138, 148, 168);
+          font-size: 14px;
+          font-weight: 700;
+          line-height: 20px;
+          margin-bottom: 8px;
+          letter-spacing: 0.3px;
+        }
+
+        .balance-amount-row {
+          display: flex;
+          align-items: baseline;
+          gap: 10px;
+          margin-bottom: 6px;
+        }
+
+        .balance-amount {
+          font-size: 36px;
+          font-weight: 700;
+          line-height: 40px;
+          color: rgb(5, 179, 214);
+          letter-spacing: -0.5px;
+          font-family: "Fredoka", sans-serif;
+        }
+
+        .balance-coin {
+          flex-shrink: 0;
+          display: inline-flex;
+          align-items: flex-end;
+          margin-bottom: 4px;
+        }
+
+        .balance-unit {
+          color: rgb(138, 148, 168);
+          font-size: 14px;
+          font-weight: 400;
+          line-height: 20px;
+        }
+
+        .balance-mascot-img {
+          display: block;
+          width: 120px;
+          max-width: 120px;
+          aspect-ratio: 1.07 / 1;
+          object-fit: contain;
+          flex-shrink: 0;
+          margin: 0;
+          align-self: center;
+        }
+
+        /* Secondary Stats Cards */
+        .stats-row {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 12px;
+        }
+
+        .stat-card {
+          backdrop-filter: blur(12px);
+          background: linear-gradient(145deg, rgba(33, 27, 45, 0.8), rgba(23, 19, 32, 0.9));
+          border: 0.8px solid rgba(60, 51, 77, 0.5);
+          border-radius: 20px;
+          padding: 16px;
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+        }
+
+        .stat-label {
+          color: rgb(138, 148, 168);
+          font-size: 12px;
+          font-weight: 700;
+          line-height: 16px;
+          text-transform: capitalize;
+          letter-spacing: 0.2px;
+        }
+
+        .stat-amount-row {
+          display: flex;
+          align-items: baseline;
+          gap: 8px;
+        }
+
+        .stat-amount {
+          font-size: 24px;
+          font-weight: 700;
+          line-height: 32px;
+          font-family: "Fredoka", sans-serif;
+        }
+
+        .stat-coin {
+          flex-shrink: 0;
+          display: inline-flex;
+          align-items: flex-end;
+          margin-bottom: 2px;
+        }
+
+        /* Earned Card - Green theme */
+        .earned-card {
+          --stat-color: rgb(16, 183, 127);
+        }
+
+        .earned-card .stat-amount {
+          color: rgb(16, 183, 127);
+        }
+
+        /* Spent Card - Purple theme */
+        .spent-card {
+          --stat-color: rgb(149, 96, 240);
+        }
+
+        .spent-card .stat-amount {
+          color: rgb(149, 96, 240);
+        }
+
         /* Product Card Price Coin - Compact inline icon */
         .edu-coin-product-price {
           width: 18px !important;
           height: 18px !important;
         }
 
+        /* ============ RESPONSIVE STYLES ============ */
         @media (max-width: 640px) {
           .accent-blur-bg {
             width: 249px !important;
             height: 327px !important;
           }
+
+          .balance-card-primary {
+            flex-direction: row;
+            padding: 16px 20px;
+            gap: 16px;
+            min-height: 120px;
+          }
+
+          .balance-amount {
+            font-size: 32px;
+            line-height: 36px;
+          }
+
+          .balance-mascot-img {
+            width: 100px;
+            max-width: 100px;
+          }
+
+          .stats-row {
+            gap: 12px;
+          }
+
+          .stat-card {
+            margin-top: 8px;
+          }
+
           .edu-coin-balance-lg {
             width: 30px !important;
           }
@@ -105,9 +277,6 @@ export default function RewardsPage() {
           }
           .edu-coin-summary img {
             width: 25px !important;
-          }
-          .hero-coin-image {
-            margin: 0 auto !important;
           }
           .edu-coin-product-price {
             width: 16px !important;
@@ -195,79 +364,69 @@ export default function RewardsPage() {
         {!showHistory ? (
           <>
             {/* ============ WALLET SUMMARY SECTION ============ */}
-            <div className="relative mb-8 slide-up">
-              {/* Primary Wallet Bar */}
-              <div className="flex flex-row">
-                <div className="bg-gradient-to-r from-accent/10 to-primary/10 rounded-2xl p-6 mb-6 border border-accent/20">
-                  <div className="flex items-center justify-between">
-                    <div className="text-left">
-                      <p className="text-sm text-muted-foreground mb-1 font-bold">Balance</p>
-                      <div className="flex flex-row items-center gap-3">
-                        <h2 className="font-display text-4xl font-bold text-accent">
-                          {currentBalance.toLocaleString()}
-                        </h2>
-                        <EduCoin size="lg" imgClassName="edu-coin-balance-lg" />
-                      </div>
-                      <p className="text-sm text-muted-foreground mt-1">EduCoins</p>
+            <div className="balance-section relative mb-8 slide-up">
+              {/* ROW 1: Primary Balance Card */}
+              <div className="balance-card-primary">
+                {/* Left Column: Text Content */}
+                <div className="balance-content">
+                  <div className="balance-label">Balance</div>
+                  <div className="balance-amount-row">
+                    <span className="balance-amount">{currentBalance.toLocaleString()}</span>
+                    <div className="balance-coin">
+                      <EduCoin size="lg" imgClassName="edu-coin-balance-lg" />
                     </div>
                   </div>
+                  <div className="balance-unit">EduCoins</div>
                 </div>
+
+                {/* Right Column: Mascot Illustration */}
                 <img
                   loading="lazy"
-                  srcSet="https://cdn.builder.io/api/v1/image/assets%2Fa9d627de7a0c400a9a5045a9ca4a12ea%2Fbf3bd7389fad4f3289ccdf4eaf5e5789?width=100 100w, https://cdn.builder.io/api/v1/image/assets%2Fa9d627de7a0c400a9a5045a9ca4a12ea%2Fbf3bd7389fad4f3289ccdf4eaf5e5789?width=200 200w, https://cdn.builder.io/api/v1/image/assets%2Fa9d627de7a0c400a9a5045a9ca4a12ea%2Fbf3bd7389fad4f3289ccdf4eaf5e5789?width=400 400w, https://cdn.builder.io/api/v1/image/assets%2Fa9d627de7a0c400a9a5045a9ca4a12ea%2Fbf3bd7389fad4f3289ccdf4eaf5e5789?width=800 800w, https://cdn.builder.io/api/v1/image/assets%2Fa9d627de7a0c400a9a5045a9ca4a12ea%2Fbf3bd7389fad4f3289ccdf4eaf5e5789?width=1200 1200w, https://cdn.builder.io/api/v1/image/assets%2Fa9d627de7a0c400a9a5045a9ca4a12ea%2Fbf3bd7389fad4f3289ccdf4eaf5e5789?width=1600 1600w, https://cdn.builder.io/api/v1/image/assets%2Fa9d627de7a0c400a9a5045a9ca4a12ea%2Fbf3bd7389fad4f3289ccdf4eaf5e5789?width=2000 2000w, https://cdn.builder.io/api/v1/image/assets%2Fa9d627de7a0c400a9a5045a9ca4a12ea%2Fbf3bd7389fad4f3289ccdf4eaf5e5789"
-                  style={{
-                    aspectRatio: "1.07",
-                    objectFit: "contain",
-                    objectPosition: "center",
-                    width: "100%",
-                    marginLeft: "20px",
-                    minHeight: "20px",
-                    minWidth: "20px",
-                    overflow: "hidden",
-                  }}
-                  className="max-sm:max-w-[140px] max-sm:m-0 max-sm:ml-[7px] hero-coin-image"
+                  src="https://cdn.builder.io/api/v1/image/assets%2F128ddd532bd34e33805885edbd9b265d%2F9678a1fbc79b466e821d24748b6cf682"
+                  alt="Balance Mascot"
+                  className="balance-mascot-img"
                 />
               </div>
 
-              {/* Secondary Stats Row - Glass Cards */}
-              <div className="flex gap-4">
+              {/* ROW 2: Secondary Stats Cards (Earned & Spent) */}
+              <div className="stats-row">
                 {/* Earned Card */}
-                <div className="flex-1 glass-card rounded-xl p-4 border border-border/50">
-                  <p className="text-xs text-muted-foreground mb-2 font-bold">Earned</p>
-                  <div className="flex items-center gap-2">
-                    <p className="font-heading text-2xl font-bold text-secondary">
-                      {earned.toLocaleString()}
-                    </p>
-                    <img
-                      alt="EduCoin"
-                      width="48"
-                      height="48"
-                      loading="lazy"
-                      src="https://cdn.builder.io/api/v1/image/assets%2Fa9d627de7a0c400a9a5045a9ca4a12ea%2F461226e32d554b2c97f6e5a78d92d2bd"
-                      className="edu-coin-earned"
-                      style={{
-                        display: "block",
-                        aspectRatio: "1 / 1",
-                        filter: "drop-shadow(rgba(0, 0, 0, 0.04) 0px 10px 8px) drop-shadow(rgba(0, 0, 0, 0.1) 0px 4px 3px)",
-                        objectFit: "contain",
-                        width: "35px",
-                      }}
-                    />
+                <div className="stat-card earned-card">
+                  <div className="stat-label">Earned&nbsp;📈</div>
+                  <div className="stat-amount-row">
+                    <span className="stat-amount">{earned.toLocaleString()}</span>
+                    <div className="stat-coin">
+                      <img
+                        alt="EduCoin"
+                        width="48"
+                        height="48"
+                        loading="lazy"
+                        src="https://cdn.builder.io/api/v1/image/assets%2Fa9d627de7a0c400a9a5045a9ca4a12ea%2F461226e32d554b2c97f6e5a78d92d2bd"
+                        className="edu-coin-earned"
+                        style={{
+                          display: "block",
+                          aspectRatio: "1 / 1",
+                          filter: "drop-shadow(rgba(0, 0, 0, 0.04) 0px 10px 8px) drop-shadow(rgba(0, 0, 0, 0.1) 0px 4px 3px)",
+                          objectFit: "contain",
+                          width: "24px",
+                        }}
+                      />
+                    </div>
                   </div>
                 </div>
 
                 {/* Spent Card */}
-                <div className="flex-1 glass-card rounded-xl p-4 border border-border/50">
-                  <p className="text-xs text-muted-foreground mb-2 font-bold">Spent</p>
-                  <div className="flex items-center gap-2">
-                    <p className="font-heading text-2xl font-bold text-primary">
-                      {spent.toLocaleString()}
-                    </p>
-                    <EduCoin
-                      size="sm"
-                      imgClassName="edu-coin-spent-sm"
-                      src="https://cdn.builder.io/api/v1/image/assets%2Fa9d627de7a0c400a9a5045a9ca4a12ea%2F461226e32d554b2c97f6e5a78d92d2bd"
-                    />
+                <div className="stat-card spent-card">
+                  <div className="stat-label">Spent 📉</div>
+                  <div className="stat-amount-row">
+                    <span className="stat-amount">{spent.toLocaleString()}</span>
+                    <div className="stat-coin">
+                      <EduCoin
+                        size="sm"
+                        imgClassName="edu-coin-spent-sm"
+                        src="https://cdn.builder.io/api/v1/image/assets%2Fa9d627de7a0c400a9a5045a9ca4a12ea%2F461226e32d554b2c97f6e5a78d92d2bd"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
