@@ -42,7 +42,7 @@ export function EduCoin({
       `}</style>
 
       <img
-        src="https://cdn.builder.io/api/v1/image/assets%2F5367439bd6874de29cc9e48538762737%2F92c4ed1bf9034018abbad640d29cbcb2"
+        src="https://cdn.builder.io/api/v1/image/assets%2Fa9d627de7a0c400a9a5045a9ca4a12ea%2F6df1eb74c5aa43698eea5229a2df81d4"
         alt="EduCoin"
         width={dimension}
         height={dimension}
